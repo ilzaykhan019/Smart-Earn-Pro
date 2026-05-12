@@ -1,0 +1,70 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile containing balances, plans, and referral info.",
+      "type": "object",
+      "properties": {
+        "ownerId": { "type": "string" },
+        "email": { "type": "string" },
+        "fullName": { "type": "string" },
+        "username": { "type": "string" },
+        "phoneNumber": { "type": "string" },
+        "balance": { "type": "number" },
+        "role": { "type": "string", "enum": ["user", "admin"] },
+        "activePlanId": { "type": "string" },
+        "investmentAmount": { "type": "number" },
+        "totalEarnings": { "type": "number" },
+        "referralCode": { "type": "string" },
+        "referredBy": { "type": "string" },
+        "hasInvested": { "type": "boolean" },
+        "tasksCompletedToday": { "type": "number" },
+        "adsWatchedToday": { "type": "number" },
+        "lastActiveDate": { "type": "string" },
+        "createdAt": { "type": "number" },
+        "updatedAt": { "type": "number" }
+      },
+      "required": ["ownerId", "email", "fullName", "username", "phoneNumber", "balance", "role", "investmentAmount", "totalEarnings", "hasInvested", "tasksCompletedToday", "adsWatchedToday", "lastActiveDate", "createdAt", "updatedAt"]
+    },
+    "Transaction": {
+      "title": "Transaction",
+      "description": "A deposit, withdrawal, ad reward, task reward, or plan purchase.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "type": { "type": "string", "enum": ["deposit", "withdrawal", "plan_purchase", "ad_reward", "task_reward", "referral_bonus"] },
+        "amount": { "type": "number" },
+        "method": { "type": "string" },
+        "status": { "type": "string", "enum": ["pending", "approved", "rejected", "completed"] },
+        "timestamp": { "type": "number" }
+      },
+      "required": ["userId", "type", "amount", "status", "timestamp"]
+    },
+    "Task": {
+      "title": "Task",
+      "description": "Daily task records for the user.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "type": { "type": "string", "enum": ["ad", "task"] },
+        "rewardAmount": { "type": "number" },
+        "completedAt": { "type": "number" }
+      },
+      "required": ["userId", "type", "rewardAmount", "completedAt"]
+    }
+  },
+  "firestore": {
+    "users/{userId}": {
+      "schema": { "$ref": "#/entities/User" },
+      "description": "User profiles. userId must match Auth ID."
+    },
+    "users/{userId}/transactions/{transactionId}": {
+      "schema": { "$ref": "#/entities/Transaction" },
+      "description": "Transactions. Can be created by user (e.g. deposit request), updated by admin (e.g. approved), etc."
+    },
+    "users/{userId}/tasks/{taskId}": {
+       "schema": { "$ref": "#/entities/Task" },
+       "description": "Tasks/ads completed by user."
+    }
+  }
+}
